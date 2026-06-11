@@ -6,15 +6,22 @@
   <meta name="robots" content="noindex, nofollow" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
   <title>Whitney Network</title>
   <style>
     header {
-      padding: 36px;
+      text-align: center;
     }
 
-    main {
-      padding: 36px;
+    .sidebar {
+      float: left;
+      width: 300px;
+      padding: 10px;
+      margin: 0;
+    }
+
+    .sidebar h3 {
+      text-align: center;
     }
   </style>
 </head>
@@ -23,28 +30,47 @@
   <main class="container">
     <header>
       <h1>Whitney Network</h1>
+      <nav>
+        <ul>
+          <li><a class="button" href="http://nas:8212/">Immich</a></li>
+          <li><a class="button" href="http://nas:9000/">Portainer</a></li>
+          <li><a class="button" href="http://nas:5545/">IT Tools</a></li>
+          <li><a class="button" href="http://nas:3000/">Local AI</a></li>
+          <li><a class="button" href="http://nas:8095/">Beszel</a></li>
+          <li>
+            <a class="button" href="https://login.tailscale.com/admin/machines" target="_blank">Tailscale</a>
+          </li>
+        </ul>
+      </nav>
     </header>
 
-    <main>
-      <aside>
+    <section>
+      <aside class="sidebar">
+        <h3>All services</h3>
         <nav>
-          <ul>
-            <li><a href="http://nas:8212/">Immich</a></li>
-            <li><a href="http://nas:3000/">AI</a></li>
-            <li><a href="http://nas:8095/">Beszel</a></li>
-            <li><a href="http://nas:5545/">IT Tools</a></li>
-            <li><a href="http://nas:9805/">Kimai</a></li>
-            <li><a href="http://nas:9000/">Portainer</a></li>
-            <li><a href="http://nas:8123/">Home assistant</a></li>
-            <li><a href="http://nas:4999/">Port tracker</a></li>
-            <li>
-              <a href="https://login.tailscale.com/admin/machines" target="_blank">Tailscale</a>
-            </li>
+          <ul id="service-list">
+
           </ul>
         </nav>
       </aside>
-    </main>
+    </section>
+
   </main>
 </body>
+<script>
+  const main = async () => {
+    const fetchServices = await fetch('http://nas:4999/api/services')
+      .then(response => response.json())
+      .then(data => data.services)
+      .catch(error => console.error('Error fetching services:', error));
+    const serviceList = document.getElementById('service-list');
+    fetchServices.forEach(service => {
+      const listItem = document.createElement('li');
+      listItem.textContent = `${service.name} - ${service.color === 'green' ? '✅' : '❌'}`;
+      serviceList.appendChild(listItem);
+    });
+  }
+  main()
+</script>
 
 </html>
